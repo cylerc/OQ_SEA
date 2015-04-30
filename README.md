@@ -1,2 +1,2 @@
 # OQ_SEA
-R script for 
+R script for Southeast Asian archaeofaunal data. 
