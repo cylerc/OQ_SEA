@@ -55,6 +55,19 @@ library(ggplot2) #Version 1.0.0
 library(reshape2)
 library(gridExtra)
 
+# define a custom plot theme to avoid repeating it...
+theme_new <- theme_set(theme_bw())
+theme_new <- theme_update(
+          axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90),
+          axis.text.y = element_text(vjust=0.5, color="black", size=20), 
+          axis.title.y = element_text(vjust=1.0, color="black", size=20, angle=90),
+          axis.title.x = element_text(vjust=0.5, color="black", size=20),
+          strip.text.x = element_text(size=25),
+          legend.position = "bottom", 
+          legend.text = element_text(size=20), 
+          legend.title = element_text(size=20)) 
+
+
 ################################################################################
 # CHUNK 1-Figure 2: Decadal division of faunal publications using differential 
 # methodological recording techniques during the 1930s–2010s. Download data file 
@@ -71,18 +84,13 @@ sea <- read.csv(fn, stringsAsFactors = FALSE, check.names = FALSE)
 sea
 str(sea)
 
-sea.long <- melt(sea, value.name="Value")
+sea.long <- melt(sea, value.name="Count")
 sea.long  
-ggplot(sea.long, aes(`Faunal Publications`, Value, group = 1)) +
+ggplot(sea.long, aes(`Faunal Publications`, Count, group = 1)) +
   geom_point(size = 4) +
   geom_line() +
-  facet_wrap(~ variable) +
-  theme_bw() +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20), 
-        axis.title.y = element_text(vjust=2.0, color="black", size=20),
-        axis.title.x = element_text(vjust=0.5, color="black", size=20),
-        strip.text.x = element_text(size=30))
+  facet_wrap(~ variable) 
+ 
 # there are no dimensions specified at http://www.openquaternary.com/about/submissions/#Figures & Tables
 # so we'll just do what looks good...
 fig_width <- 300 # play with this number
@@ -124,17 +132,7 @@ thai.long$Total.ind <- factor(ifelse((thai.long$Site == "NISP"), "Total", "Sites
 p1 <- ggplot(thai.long, aes(x = NISP, y = `Taxonomic Classification`)) +
   guides(colour=guide_legend(nrow=3,byrow=TRUE)) +
   geom_point(aes(colour = Site), alpha = 0.75, size=5) + 
-  facet_grid(. ~ Total.ind) + 
-  theme_bw() +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20),
-        strip.text.x = element_text(size=20),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20), 
-        legend.title = element_text(size=20)) 
+  facet_grid(. ~ Total.ind)
 p1
 # save plot
 fig_width <- 300 # play with this number
@@ -174,18 +172,7 @@ thai2.long$Total.ind <- factor(ifelse((thai2.long$Site == "NISP"), "Total", "Sit
 
 p2 <- ggplot(thai2.long, aes(x = NISP, y = `Taxonomic Classification`))
 p2 <- p2 + geom_point(aes(colour = Site), alpha = 0.75, size=5)
-p2 <- p2 + facet_grid(. ~ Total.ind)
-p2 <- p2 + theme_bw() +
-  guides(colour=guide_legend(nrow=3,byrow=TRUE)) +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20),
-        strip.text.x = element_text(size=20),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20), 
-        legend.title = element_text(size=20))
+p2 <- p2 + facet_grid(. ~ Total.ind) +  guides(colour=guide_legend(nrow=3,byrow=TRUE)) 
 p2
 # save plot
 fig_width <- 300 # play with this number
@@ -225,18 +212,7 @@ thai3.long$Total.ind <- factor(ifelse((thai3.long$Site == "NISP"), "Total", "Sit
 
 p3 <- ggplot(thai3.long, aes(x = NISP, y = `Taxonomic Classification`))
 p3 <- p3 + geom_point(aes(colour = Site), alpha = 0.75, size=5)
-p3 <- p3 + facet_grid(. ~ Total.ind)
-p3 <- p3 + theme_bw() +
-  guides(colour=guide_legend(nrow=3,byrow=TRUE)) + 
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20),
-        strip.text.x = element_text(size=20),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20), 
-        legend.title = element_text(size=20))
+p3 <- p3 + facet_grid(. ~ Total.ind) +  guides(colour=guide_legend(nrow=3,byrow=TRUE)) 
 p3
 # save plot
 fig_width <- 300 # play with this number
@@ -276,18 +252,7 @@ ma.long$Total.ind <- factor(ifelse((ma.long$Site == "Total NISP"), "Total", "Sit
 
 p4 <- ggplot(ma.long, aes(x = NISP, y = `Taxonomic Classification`))
 p4 <- p4 + geom_point(aes(colour = Site), alpha = 0.75, size=5)
-p4 <- p4 + facet_grid(. ~ Total.ind)
-p4 <- p4 + theme_bw() +
-  guides(colour=guide_legend(nrow=3,byrow=TRUE)) + 
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20 ), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20 ),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20 ),
-        strip.text.x = element_text(size=20),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20), 
-        legend.title = element_text(size=20))
+p4 <- p4 + facet_grid(. ~ Total.ind) +  guides(colour=guide_legend(nrow=3,byrow=TRUE)) 
 p4
 # save plot
 fig_width <- 300 # play with this number
@@ -319,14 +284,22 @@ for(i in seq_along(fig7_data)){
     labs(title = names(fig7_data)[i]) + xlab("") +ylab("") + ylim(0,2) +
     coord_flip() +
     theme_bw() +
-    theme(axis.text.x = element_text(vjust=0.5, color="black", size=20),
-          axis.text.y = element_text(vjust=0.5, color="black", size=20), 
-          axis.title.y = element_text(vjust=2.0, color="black", size=20),
-          axis.title.x = element_text(vjust=0.5, color="black", size=20),
+    theme(axis.text.x = element_text(vjust=0.5, color="black", size=30),
+          axis.text.y = element_text(vjust=0.5, color="black", size=30), 
+          axis.title.y = element_text(vjust=2.0, color="black", size=30),
+          axis.title.x = element_text(vjust=0.5, color="black", size=30),
           strip.text.x = element_text(size=30),
-          plot.title = element_text(vjust=0.5, color="black", size=20))
+          plot.title = element_text(vjust=0.5, color="black", size=30))
   my_plots[[i]] <- p
 }
+# to see it
+g <-do.call("grid.arrange", c(my_plots, ncol=4))
+# to dave it
+g1 <-do.call("arrangeGrob", c(my_plots, ncol=4))
 
-do.call("grid.arrange", c(my_plots, ncol=4))
+# save plot
+fig_width <- 500 # play with this number
+ggsave(filename = "figures/fig_7.png", g1,
+       dpi = 300, units = "mm",
+       height = fig_width, width = fig_width)
 
