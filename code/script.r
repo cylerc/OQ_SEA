@@ -55,10 +55,23 @@ library(ggplot2) #Version 1.0.0
 library(reshape2)
 library(gridExtra)
 
+# define a custom plot theme to avoid repeating it...
+theme_new <- theme_set(theme_bw())
+theme_new <- theme_update(
+          axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90),
+          axis.text.y = element_text(vjust=0.5, color="black", size=20), 
+          axis.title.y = element_text(vjust=1.0, color="black", size=20, angle=90),
+          axis.title.x = element_text(vjust=0.5, color="black", size=20),
+          strip.text.x = element_text(size=25),
+          legend.position = "bottom", 
+          legend.text = element_text(size=20), 
+          legend.title = element_text(size=20)) 
+
+
 ################################################################################
 # CHUNK 1-Figure 2: Decadal division of faunal publications using differential 
 # methodological recording techniques during the 1930s–2010s. Download data file 
-# "figure2.csv" from Conrad (2015). This file includes counts per decade for 
+# "data/figure2.csv" from Conrad (2015). This file includes counts per decade for 
 # each recording technique used in archaeozoological publications. This figure 
 # is constructed by reshaping the data into long format, then using 
 # facet_wrap() to construct four plots, one per recording technique. 
@@ -66,29 +79,29 @@ library(gridExtra)
 
 
 # Set absolute path to csv file on your computer
-fn <- "figure2.csv" 
+fn <- "data/figure2.csv" 
 sea <- read.csv(fn, stringsAsFactors = FALSE, check.names = FALSE)
 sea
 str(sea)
 
-sea.long <- melt(sea, value.name="Value")
+sea.long <- melt(sea, value.name="Count")
 sea.long  
-ggplot(sea.long, aes(`Faunal Publications`, Value, group = 1)) +
+ggplot(sea.long, aes(`Faunal Publications`, Count, group = 1)) +
   geom_point(size = 4) +
   geom_line() +
-  facet_wrap(~ variable) +
-  theme_bw() +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, face="bold", 
-                                   angle=90),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20, face="bold"), 
-        axis.title.y = element_text(vjust=2.0, color="black", size=20, face="bold"),
-        axis.title.x = element_text(vjust=0.5, color="black", size=20, face="bold"),
-        strip.text.x = element_text(size=30))
+  facet_wrap(~ variable) 
+ 
+# there are no dimensions specified at http://www.openquaternary.com/about/submissions/#Figures & Tables
+# so we'll just do what looks good...
+fig_width <- 300 # play with this number
+ggsave(filename = "figures/fig_2.png",
+       dpi = 300, units = "mm",
+       height = fig_width/1.6, width =  fig_width)
 
 ################################################################################
 # CHUNK 2-Figure 3: Grouped classifications from Thailand sites expressing total NISP 
 # counts per site (left column), and total NISP counts for all sites (right column).
-# Download data file "figure3.csv" from Conrad (2015). This file 
+# Download data file "data/figure3.csv" from Conrad (2015). This file 
 # includes total NISP counts for all Thai sites in this dataset, grouped by 
 # highest taxon specific values. To create this figure the data is reshaped 
 # to a long format and wrapped to express NISP counts per taxonomic classification 
@@ -98,7 +111,7 @@ ggplot(sea.long, aes(`Faunal Publications`, Value, group = 1)) +
 ################################################################################
 
 
-fn <- "figure3.csv"
+fn <- "data/figure3.csv"
 thai <- read.csv(fn, stringsAsFactors = FALSE, skip = 1, check.names=FALSE)
 thai
 str(thai)
@@ -116,25 +129,21 @@ thai.long <- melt(thai
                   , na.rm = TRUE)
 thai.long$Total.ind <- factor(ifelse((thai.long$Site == "NISP"), "Total", "Sites"))
 
-p1 <- ggplot(thai.long, aes(x = NISP, y = `Taxonomic Classification`))
-p1 <- p1 + geom_point(aes(colour = Site), alpha = 0.75, size=5)
-p1 <- p1 + facet_grid(. ~ Total.ind)
-p1 <- p1 + theme_bw() +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20, face="bold"), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20, face="bold"),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20, face="bold"),
-        strip.text.x = element_text(size=20, face="bold"),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20, face="bold"), 
-        legend.title = element_text(size=20))
+p1 <- ggplot(thai.long, aes(x = NISP, y = `Taxonomic Classification`)) +
+  guides(colour=guide_legend(nrow=3,byrow=TRUE)) +
+  geom_point(aes(colour = Site), alpha = 0.75, size=5) + 
+  facet_grid(. ~ Total.ind)
 p1
+# save plot
+fig_width <- 300 # play with this number
+ggsave(filename = "figures/fig_3.png",
+       dpi = 300, units = "mm",
+       height = fig_width/1.6, width =  fig_width)
 
 ################################################################################
 # CHUNK 3-Figure 4: Grouped classifications from Thailand sites expressing total NISP 
 # counts per site (left column), and total NISP counts for all sites (right column) 
-# without Moh Khiew Cave II. Download data file "figure4.csv" from Conrad (2015).  
+# without Moh Khiew Cave II. Download data file "data/figure4.csv" from Conrad (2015).  
 # This file includes total NISP counts for all Thai sites in this dataset, 
 # excluding Moh Khiew Cave II. This csv file is also grouped by highest taxon 
 # specific values.To create this figure the data is reshaped like prior. The plot 
@@ -143,7 +152,7 @@ p1
 ################################################################################
 
 
-fn <- "figure4.csv"
+fn <- "data/figure4.csv"
 thai2 <- read.csv(fn, stringsAsFactors = FALSE, skip = 1, check.names=FALSE)
 thai2
 str(thai2)
@@ -163,23 +172,18 @@ thai2.long$Total.ind <- factor(ifelse((thai2.long$Site == "NISP"), "Total", "Sit
 
 p2 <- ggplot(thai2.long, aes(x = NISP, y = `Taxonomic Classification`))
 p2 <- p2 + geom_point(aes(colour = Site), alpha = 0.75, size=5)
-p2 <- p2 + facet_grid(. ~ Total.ind)
-p2 <- p2 + theme_bw() +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20, face="bold"), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20, face="bold"),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20, face="bold"),
-        strip.text.x = element_text(size=20, face="bold"),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20, face="bold"), 
-        legend.title = element_text(size=20))
+p2 <- p2 + facet_grid(. ~ Total.ind) +  guides(colour=guide_legend(nrow=3,byrow=TRUE)) 
 p2
+# save plot
+fig_width <- 300 # play with this number
+ggsave(filename = "figures/fig_4.png",
+       dpi = 300, units = "mm",
+       height = fig_width/1.6, width =  fig_width)
 
 ################################################################################
 # CHUNK 4-Figure 5: Grouped classifications from Thailand sites expressing total NISP 
 # counts per site (left column), and total NISP counts for all sites 
-# (right column) without Testudines. Download data file "figure5.csv" from 
+# (right column) without Testudines. Download data file "data/figure5.csv" from 
 # Conrad (2015). This file includes total NISP counts for all Thai sites in 
 # this dataset, excluding Testudines. This csv file is also grouped by highest 
 # taxon specific values. To create this figure the data is reshaped like prior. 
@@ -188,7 +192,7 @@ p2
 ################################################################################
 
 
-fn <- "figure5.csv"
+fn <- "data/figure5.csv"
 thai3 <- read.csv(fn, stringsAsFactors = FALSE, skip = 1, check.names=FALSE)
 thai3
 str(thai3)
@@ -208,23 +212,18 @@ thai3.long$Total.ind <- factor(ifelse((thai3.long$Site == "NISP"), "Total", "Sit
 
 p3 <- ggplot(thai3.long, aes(x = NISP, y = `Taxonomic Classification`))
 p3 <- p3 + geom_point(aes(colour = Site), alpha = 0.75, size=5)
-p3 <- p3 + facet_grid(. ~ Total.ind)
-p3 <- p3 + theme_bw() +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20, face="bold"), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20, face="bold"),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20, face="bold"),
-        strip.text.x = element_text(size=20, face="bold"),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20, face="bold"), 
-        legend.title = element_text(size=20))
+p3 <- p3 + facet_grid(. ~ Total.ind) +  guides(colour=guide_legend(nrow=3,byrow=TRUE)) 
 p3
+# save plot
+fig_width <- 300 # play with this number
+ggsave(filename = "figures/fig_5.png",
+       dpi = 300, units = "mm",
+       height = fig_width/1.6, width =  fig_width)
 
 ################################################################################
 # CHUNK 5-Figure 6: Grouped classifications from Peninsular Malaysian sites expressing 
 # total NISP counts per site (left column), and total NISP counts for all sites 
-# (right column). Download data file "figure6.csv" from Conrad (2015). This file 
+# (right column). Download data file "data/figure6.csv" from Conrad (2015). This file 
 # includes total NISP counts for all Peninsula Malaysia sites in this dataset.
 # This csv file is also grouped by highest taxon specific values. 
 # To create this figure the data is reshaped like prior. The plot gives total 
@@ -233,7 +232,7 @@ p3
 ################################################################################
 
 
-fn <- "figure6.csv"
+fn <- "data/figure6.csv"
 ma <- read.csv(fn, stringsAsFactors = FALSE, skip = 1, check.names=FALSE)
 ma
 str(ma)
@@ -253,32 +252,27 @@ ma.long$Total.ind <- factor(ifelse((ma.long$Site == "Total NISP"), "Total", "Sit
 
 p4 <- ggplot(ma.long, aes(x = NISP, y = `Taxonomic Classification`))
 p4 <- p4 + geom_point(aes(colour = Site), alpha = 0.75, size=5)
-p4 <- p4 + facet_grid(. ~ Total.ind)
-p4 <- p4 + theme_bw() +
-  theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, angle=90, 
-                                   face="bold"),
-        axis.text.y = element_text(vjust=0.5, color="black", size=20, face="bold"), 
-        axis.title.y = element_text(vjust=1.0, color="black", size=20, face="bold"),
-        axis.title.x = element_text(vjust=0.1, color="black", size=20, face="bold"),
-        strip.text.x = element_text(size=20, face="bold"),
-        legend.position = "bottom", 
-        legend.text = element_text(size=20, face="bold"), 
-        legend.title = element_text(size=20))
+p4 <- p4 + facet_grid(. ~ Total.ind) +  guides(colour=guide_legend(nrow=3,byrow=TRUE)) 
 p4
+# save plot
+fig_width <- 300 # play with this number
+ggsave(filename = "figures/fig_6.png",
+       dpi = 300, units = "mm",
+       height = fig_width/1.6, width = fig_width)
 
 
 ################################################################################
 # CHUNK 6-Figure 7: Squared chord distance values for Thailand and Peninsular 
 # Malaysian sites. S=Surface context. This group of data is arranged in its final 
 # form to include eight different plots into one. For these plots, download all 
-# site specific csv files "figure7..." in Conrad (2015), then use the function 
+# site specific csv files "data/figure7..." in Conrad (2015), then use the function 
 # list.files () to upload into R. These files include squared chord distance 
 # values, quantified between contexts, for each site. The code is constructed to 
 # input the values, plot each site and loop all sites together into one plot. 
 ################################################################################
 
 
-fig7_file_names <- list.files(pattern = "figure7") 
+fig7_file_names <- list.files(path = "data/", pattern = "figure7", full.names = TRUE) 
 fig7_data <- lapply(fig7_file_names, read.csv)
 pattern_to_remove <- c("figure7_", ".csv")
 names(fig7_data) <- gsub(paste0(pattern_to_remove, collapse = "|"), "", fig7_file_names)
@@ -290,14 +284,22 @@ for(i in seq_along(fig7_data)){
     labs(title = names(fig7_data)[i]) + xlab("") +ylab("") + ylim(0,2) +
     coord_flip() +
     theme_bw() +
-    theme(axis.text.x = element_text(vjust=0.5, color="black", size=20, face="bold"),
-          axis.text.y = element_text(vjust=0.5, color="black", size=20, face="bold"), 
-          axis.title.y = element_text(vjust=2.0, color="black", size=20, face="bold"),
-          axis.title.x = element_text(vjust=0.5, color="black", size=20, face="bold"),
+    theme(axis.text.x = element_text(vjust=0.5, color="black", size=30),
+          axis.text.y = element_text(vjust=0.5, color="black", size=30), 
+          axis.title.y = element_text(vjust=2.0, color="black", size=30),
+          axis.title.x = element_text(vjust=0.5, color="black", size=30),
           strip.text.x = element_text(size=30),
-          plot.title = element_text(vjust=0.5, color="black", size=20, face="bold"))
+          plot.title = element_text(vjust=0.5, color="black", size=30))
   my_plots[[i]] <- p
 }
+# to see it
+g <-do.call("grid.arrange", c(my_plots, ncol=4))
+# to dave it
+g1 <-do.call("arrangeGrob", c(my_plots, ncol=4))
 
-do.call("grid.arrange", c(my_plots, ncol=4))
+# save plot
+fig_width <- 500 # play with this number
+ggsave(filename = "figures/fig_7.png", g1,
+       dpi = 300, units = "mm",
+       height = fig_width, width = fig_width)
 
