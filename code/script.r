@@ -272,9 +272,9 @@ ggsave(filename = "figures/fig_6.png",
 ################################################################################
 
 
-fig7_file_names <- list.files(path = "data/", pattern = "figure7", full.names = TRUE) 
+fig7_file_names <- list.files(path = "data", pattern = "figure7", full.names = TRUE) 
 fig7_data <- lapply(fig7_file_names, read.csv)
-pattern_to_remove <- c("figure7_", ".csv")
+pattern_to_remove <- c("figure7_", "data/", ".csv")
 names(fig7_data) <- gsub(paste0(pattern_to_remove, collapse = "|"), "", fig7_file_names)
 my_plots <- vector("list", length = length(fig7_data))
 for(i in seq_along(fig7_data)){
@@ -293,9 +293,9 @@ for(i in seq_along(fig7_data)){
   my_plots[[i]] <- p
 }
 # to see it
-g <-do.call("grid.arrange", c(my_plots, ncol=4))
+g <- do.call("grid.arrange", c(my_plots, ncol=4))
 # to dave it
-g1 <-do.call("arrangeGrob", c(my_plots, ncol=4))
+g1 <- do.call("arrangeGrob", c(my_plots, ncol=4))
 
 # save plot
 fig_width <- 500 # play with this number
