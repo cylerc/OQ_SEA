@@ -8,7 +8,7 @@
 
  Results described in:
  
- Conrad, C. (in review). Archaeozoology in Mainland Southeast Asia: Changing
+ Conrad, C. (in press). Archaeozoology in Mainland Southeast Asia: Changing
  Methodology and Pleistocene to Holocene Forager Subsistence Patterns in 
  Thailand and Peninsular Malaysia. Open Quaternary. 
 
