@@ -1,3 +1,4 @@
+```{r}
 ################################################################################
 # R scripts to create figures on archaeozoological data from mainland Southeast
 # Asian prehistoric sites. 
@@ -44,9 +45,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 ################################################################################
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
 
-
-
+```{r}
 ################################################################################
 # CHUNK 1: load libraries
 ################################################################################
@@ -66,8 +69,9 @@ theme_new <- theme_update(
           legend.position = "bottom", 
           legend.text = element_text(size=20), 
           legend.title = element_text(size=20)) 
+```
 
-
+```{r}
 ################################################################################
 # CHUNK 1-Figure 2: Decadal division of faunal publications using differential 
 # methodological recording techniques during the 1930s–2010s. Download data file 
@@ -97,7 +101,9 @@ fig_width <- 300 # play with this number
 ggsave(filename = "figures/fig_2.png",
        dpi = 300, units = "mm",
        height = fig_width/1.6, width =  fig_width)
+```
 
+```{r}
 ################################################################################
 # CHUNK 2-Figure 3: Grouped classifications from Thailand sites expressing total NISP 
 # counts per site (left column), and total NISP counts for all sites (right column).
@@ -139,7 +145,9 @@ fig_width <- 300 # play with this number
 ggsave(filename = "figures/fig_3.png",
        dpi = 300, units = "mm",
        height = fig_width/1.6, width =  fig_width)
+```
 
+```{r}
 ################################################################################
 # CHUNK 3-Figure 4: Grouped classifications from Thailand sites expressing total NISP 
 # counts per site (left column), and total NISP counts for all sites (right column) 
@@ -179,7 +187,9 @@ fig_width <- 300 # play with this number
 ggsave(filename = "figures/fig_4.png",
        dpi = 300, units = "mm",
        height = fig_width/1.6, width =  fig_width)
+```
 
+```{r}
 ################################################################################
 # CHUNK 4-Figure 5: Grouped classifications from Thailand sites expressing total NISP 
 # counts per site (left column), and total NISP counts for all sites 
@@ -219,7 +229,9 @@ fig_width <- 300 # play with this number
 ggsave(filename = "figures/fig_5.png",
        dpi = 300, units = "mm",
        height = fig_width/1.6, width =  fig_width)
+```
 
+```{r}
 ################################################################################
 # CHUNK 5-Figure 6: Grouped classifications from Peninsular Malaysian sites expressing 
 # total NISP counts per site (left column), and total NISP counts for all sites 
@@ -259,8 +271,9 @@ fig_width <- 300 # play with this number
 ggsave(filename = "figures/fig_6.png",
        dpi = 300, units = "mm",
        height = fig_width/1.6, width = fig_width)
+```
 
-
+```{r}
 ################################################################################
 # CHUNK 6-Figure 7: Squared chord distance values for Thailand and Peninsular 
 # Malaysian sites. S=Surface context. This group of data is arranged in its final 
@@ -292,14 +305,17 @@ for(i in seq_along(fig7_data)){
           plot.title = element_text(vjust=0.5, color="black", size=30))
   my_plots[[i]] <- p
 }
-# to see it
-g <- do.call("grid.arrange", c(my_plots, ncol=4))
-# to dave it
+
+
+# to Save it
 g1 <- do.call("arrangeGrob", c(my_plots, ncol=4))
+# view it
+g1
 
 # save plot
 fig_width <- 500 # play with this number
 ggsave(filename = "figures/fig_7.png", g1,
        dpi = 300, units = "mm",
        height = fig_width, width = fig_width)
+```
 
