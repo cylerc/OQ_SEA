@@ -45,6 +45,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 ################################################################################
+# set the base directory for knitr to the directory above this one
 library(knitr)
 opts_knit$set(root.dir = '../')
 ```
@@ -94,9 +95,7 @@ ggplot(sea.long, aes(`Faunal Publications`, Count, group = 1)) +
   geom_point(size = 4) +
   geom_line() +
   facet_wrap(~ variable) 
- 
-# there are no dimensions specified at http://www.openquaternary.com/about/submissions/#Figures & Tables
-# so we'll just do what looks good...
+# save plot
 fig_width <- 300 # play with this number
 ggsave(filename = "figures/fig_2.png",
        dpi = 300, units = "mm",
@@ -313,7 +312,7 @@ g1 <- do.call("arrangeGrob", c(my_plots, ncol=4))
 g1
 
 # save plot
-fig_width <- 500 # play with this number
+fig_width <- 600 # play with this number
 ggsave(filename = "figures/fig_7.png", g1,
        dpi = 300, units = "mm",
        height = fig_width, width = fig_width)
